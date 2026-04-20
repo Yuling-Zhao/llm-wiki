@@ -2,6 +2,8 @@
 
 LLM Wiki is a local template and CLI for building personal knowledge bases that compound over time. Instead of asking an LLM to retrieve raw chunks from documents on every question, you ask the LLM to maintain a persistent markdown wiki between you and the raw sources.
 
+This project is based on Andrej Karpathy's original `llm-wiki.md` idea note: <https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f>.
+
 ## Install
 
 From a GitHub checkout:
