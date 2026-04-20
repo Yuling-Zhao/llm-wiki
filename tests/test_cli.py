@@ -58,6 +58,21 @@ def test_doctor_fails_when_required_file_missing(tmp_path, capsys):
     assert "missing: wiki/index.md" in capsys.readouterr().err
 
 
+def test_doctor_warns_when_pdfs_need_pdftotext(tmp_path, capsys, monkeypatch):
+    target = tmp_path / "my-wiki"
+    assert run_cli("init", str(target)) == 0
+    (target / "raw" / "paper.pdf").write_bytes(b"%PDF-1.4\n")
+    monkeypatch.setattr("llm_wiki.cli.shutil.which", lambda name: None)
+
+    exit_code = run_cli("doctor", str(target))
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert "workspace ok" in captured.out
+    assert "warning: raw/ contains PDF files but pdftotext was not found" in captured.err
+    assert "brew install poppler" in captured.err
+
+
 def test_log_prints_recent_entries(tmp_path, capsys):
     target = tmp_path / "my-wiki"
     assert run_cli("init", str(target)) == 0

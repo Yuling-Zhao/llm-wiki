@@ -46,3 +46,35 @@ llm-wiki log my-wiki
 Open the workspace with Codex, Claude Code, OpenCode, or another coding agent. Ask the agent to follow `AGENTS.md`, ingest files from `raw/`, update pages in `wiki/`, maintain `wiki/index.md`, and append parseable entries to `wiki/log.md`.
 
 Obsidian works well as the reading and browsing interface because the wiki is just markdown.
+
+## PDF Sources
+
+LLM Wiki keeps the core CLI dependency-free. If you put PDF files in `raw/`,
+install a PDF text extraction tool or provide extracted text beside the PDF.
+
+Recommended Poppler install:
+
+```bash
+# macOS
+brew install poppler
+
+# Debian/Ubuntu
+sudo apt install poppler-utils
+```
+
+Extract text before ingestion:
+
+```bash
+pdftotext -layout raw/paper.pdf raw/paper.txt
+```
+
+A good source layout is:
+
+```text
+raw/paper.pdf
+raw/paper.txt
+```
+
+Then ask your LLM agent to ingest `raw/paper.txt`, treating `raw/paper.pdf` as
+the original source. `llm-wiki doctor` warns when PDFs are present in `raw/` and
+`pdftotext` is not available.

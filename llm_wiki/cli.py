@@ -64,6 +64,16 @@ def missing_required_paths(path: Path) -> list[str]:
     return [relative for relative in REQUIRED_PATHS if not (path / relative).exists()]
 
 
+def raw_contains_pdfs(path: Path) -> bool:
+    raw_path = path / "raw"
+    if not raw_path.is_dir():
+        return False
+    return any(
+        file.is_file() and file.suffix.lower() == ".pdf"
+        for file in raw_path.rglob("*")
+    )
+
+
 def parse_log_entries(log_path: Path) -> list[str]:
     entries: list[str] = []
     for line in log_path.read_text(encoding="utf-8").splitlines():
@@ -108,6 +118,17 @@ def main(argv: list[str] | None = None) -> int:
                 for relative in missing:
                     print(f"missing: {relative}", file=sys.stderr)
                 return 1
+            if (
+                raw_contains_pdfs(Path(args.path))
+                and shutil.which("pdftotext") is None
+            ):
+                print(
+                    "warning: raw/ contains PDF files but pdftotext was not found. "
+                    "Install Poppler (macOS: brew install poppler; "
+                    "Debian/Ubuntu: apt install poppler-utils) or provide "
+                    "extracted .txt/.md files beside the PDFs.",
+                    file=sys.stderr,
+                )
             print("workspace ok")
             return 0
         if args.command == "log":
