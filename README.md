@@ -49,8 +49,9 @@ Obsidian works well as the reading and browsing interface because the wiki is ju
 
 ## PDF Sources
 
-LLM Wiki keeps the core CLI dependency-free. If you put PDF files in `raw/`,
-install a PDF text extraction tool or provide extracted text beside the PDF.
+LLM Wiki keeps the core CLI dependency-free. When the assigned ingest source is
+a PDF, keep the original PDF in `raw/` and convert a temporary text copy outside
+`raw/` for ingestion.
 
 Recommended Poppler install:
 
@@ -62,19 +63,19 @@ brew install poppler
 sudo apt install poppler-utils
 ```
 
-Extract text before ingestion:
+The LLM agent should first check whether Poppler is available:
 
 ```bash
-pdftotext -layout raw/paper.pdf raw/paper.txt
+command -v pdftotext
 ```
 
-A good source layout is:
+If `pdftotext` is available, convert with layout preservation:
 
-```text
-raw/paper.pdf
-raw/paper.txt
+```bash
+mkdir -p /tmp/trim-pdf-text
+pdftotext -layout raw/paper.pdf /tmp/trim-pdf-text/paper.txt
 ```
 
-Then ask your LLM agent to ingest `raw/paper.txt`, treating `raw/paper.pdf` as
-the original source. `llm-wiki doctor` warns when PDFs are present in `raw/` and
-`pdftotext` is not available.
+Then ask your LLM agent to ingest `/tmp/trim-pdf-text/paper.txt`, keeping
+`raw/paper.pdf` as the original source reference. `llm-wiki doctor` warns when
+PDFs are present in `raw/` and `pdftotext` is not available.

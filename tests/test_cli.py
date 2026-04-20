@@ -25,6 +25,19 @@ def test_init_creates_workspace(tmp_path):
     assert (target / "wiki" / "overview.md").is_file()
 
 
+def test_init_includes_pdf_ingest_workflow(tmp_path):
+    target = tmp_path / "my-wiki"
+
+    exit_code = run_cli("init", str(target))
+
+    agents_text = (target / "AGENTS.md").read_text(encoding="utf-8")
+    assert exit_code == 0
+    assert "command -v pdftotext" in agents_text
+    assert "pdftotext -layout" in agents_text
+    assert "/tmp/trim-pdf-text/<source-title>.txt" in agents_text
+    assert "keep the original PDF as the source reference" in agents_text
+
+
 def test_init_refuses_non_empty_directory(tmp_path, capsys):
     target = tmp_path / "existing"
     target.mkdir()
@@ -71,6 +84,7 @@ def test_doctor_warns_when_pdfs_need_pdftotext(tmp_path, capsys, monkeypatch):
     assert "workspace ok" in captured.out
     assert "warning: raw/ contains PDF files but pdftotext was not found" in captured.err
     assert "brew install poppler" in captured.err
+    assert "outside raw/ with pdftotext -layout" in captured.err
 
 
 def test_log_prints_recent_entries(tmp_path, capsys):

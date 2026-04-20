@@ -15,11 +15,17 @@ You maintain this workspace as a persistent, compounding markdown wiki.
 When the user asks you to ingest a source:
 
 1. Read the source from `raw/`.
-2. Summarize the source's key claims, evidence, entities, and concepts.
-3. Create or update relevant pages in `wiki/`.
-4. Add cross-links between related wiki pages.
-5. Update `wiki/index.md`.
-6. Append an entry to `wiki/log.md` using `## [YYYY-MM-DD] ingest | Source Title`.
+2. If the assigned ingest source is a PDF:
+   - Check for Poppler with `command -v pdftotext`.
+   - If `pdftotext` is missing, ask the user to install Poppler before continuing.
+   - Run `pdftotext -layout raw/<source-title>.pdf /tmp/trim-pdf-text/<source-title>.txt`.
+   - Write converted text outside `raw/`, for example `/tmp/trim-pdf-text/<source-title>.txt`.
+   - Ingest from the converted text and keep the original PDF as the source reference.
+3. Summarize the source's key claims, evidence, entities, and concepts.
+4. Create or update relevant pages in `wiki/`.
+5. Add cross-links between related wiki pages.
+6. Update `wiki/index.md`.
+7. Append an entry to `wiki/log.md` using `## [YYYY-MM-DD] ingest | Source Title`.
 
 ## Query Workflow
 

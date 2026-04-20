@@ -125,8 +125,8 @@ def main(argv: list[str] | None = None) -> int:
                 print(
                     "warning: raw/ contains PDF files but pdftotext was not found. "
                     "Install Poppler (macOS: brew install poppler; "
-                    "Debian/Ubuntu: apt install poppler-utils) or provide "
-                    "extracted .txt/.md files beside the PDFs.",
+                    "Debian/Ubuntu: apt install poppler-utils), then convert "
+                    "PDFs outside raw/ with pdftotext -layout before ingestion.",
                     file=sys.stderr,
                 )
             print("workspace ok")
