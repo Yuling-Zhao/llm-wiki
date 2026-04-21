@@ -28,9 +28,11 @@ cd my-wiki
 The workspace contains:
 
 - `raw/` for immutable source files.
-- `wiki/` for LLM-maintained markdown pages.
-- `wiki/index.md` for the content catalog.
-- `wiki/log.md` for chronological activity.
+- `wiki/source/` for pages created directly from source ingestion.
+- `wiki/synthesis/` for synthesis pages refined through Q&A.
+- `index.md` for the content catalog.
+- `log.md` for chronological activity.
+- `overview.md` for the current synthesis entry point.
 - `AGENTS.md` for LLM-agent operating instructions.
 
 ## Check a Workspace
@@ -43,7 +45,7 @@ llm-wiki log my-wiki
 
 ## Work With an LLM Agent
 
-Open the workspace with Codex, Claude Code, OpenCode, or another coding agent. Ask the agent to follow `AGENTS.md`, ingest files from `raw/`, update pages in `wiki/`, maintain `wiki/index.md`, and append parseable entries to `wiki/log.md`.
+Open the workspace with Codex, Claude Code, OpenCode, or another coding agent. Ask the agent to follow `AGENTS.md`, ingest files from `raw/`, update pages in `wiki/source/` and `wiki/synthesis/`, maintain `index.md`, and append parseable entries to `log.md`.
 
 Obsidian works well as the reading and browsing interface because the wiki is just markdown.
 

@@ -6,9 +6,11 @@ You maintain this workspace as a persistent, compounding markdown wiki.
 
 - `raw/` contains immutable source materials supplied by the user. Read from it, do not edit it.
 - `wiki/` contains LLM-maintained markdown pages. You may create and update these files.
-- `wiki/index.md` is the content catalog. Read it first when answering questions.
-- `wiki/log.md` is the append-only activity record.
-- `wiki/overview.md` is the entry point for the current synthesis.
+- `wiki/source/` contains pages created directly from source ingestion.
+- `wiki/synthesis/` contains synthesis pages refined through Q&A with users.
+- `index.md` is the content catalog. Read it first when answering questions.
+- `log.md` is the append-only activity record.
+- `overview.md` is the entry point for the current synthesis.
 
 ## Ingest Workflow
 
@@ -22,19 +24,19 @@ When the user asks you to ingest a source:
    - Write converted text outside `raw/`, for example `/tmp/trim-pdf-text/<source-title>.txt`.
    - Ingest from the converted text and keep the original PDF as the source reference.
 3. Summarize the source's key claims, evidence, entities, and concepts.
-4. Create or update relevant pages in `wiki/`.
+4. Create or update relevant pages in `wiki/source`.
 5. Add cross-links between related wiki pages.
-6. Update `wiki/index.md`.
-7. Append an entry to `wiki/log.md` using `## [YYYY-MM-DD] ingest | Source Title`.
+6. Update `index.md`.
+7. Append an entry to `log.md` using `## [YYYY-MM-DD] ingest | Source Title`.
 
 ## Query Workflow
 
 When the user asks a question:
 
-1. Read `wiki/index.md`.
+1. Read `index.md`.
 2. Open the most relevant wiki pages.
 3. Answer from the wiki first, citing page links and source references when available.
-4. If the answer creates reusable analysis, ask whether to file it back into `wiki/`.
+4. If the answer creates reusable analysis, ask whether to file it back into `wiki/synthesis`.
 
 ## Lint Workflow
 
@@ -45,4 +47,4 @@ When asked to lint the wiki, check for contradictions, stale claims, orphan page
 - Use markdown links for files and Obsidian-style `[[Page Name]]` links for wiki concepts.
 - Keep source references close to claims.
 - Do not silently delete useful prior synthesis. Mark superseded claims and explain why.
-- Keep `wiki/log.md` append-only.
+- Keep `log.md` append-only.

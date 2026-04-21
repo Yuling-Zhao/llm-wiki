@@ -22,8 +22,12 @@ include = ["llm_wiki*"]
 [tool.setuptools.package-data]
 llm_wiki = [
     "templates/default/AGENTS.md",
+    "templates/default/index.md",
+    "templates/default/log.md",
+    "templates/default/overview.md",
     "templates/default/raw/.gitkeep",
-    "templates/default/wiki/*.md",
+    "templates/default/wiki/source/.gitkeep",
+    "templates/default/wiki/synthesis/.gitkeep",
 ]
 
 [tool.pytest.ini_options]

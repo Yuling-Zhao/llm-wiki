@@ -20,9 +20,12 @@ def test_init_creates_workspace(tmp_path):
     assert exit_code == 0
     assert (target / "AGENTS.md").is_file()
     assert (target / "raw").is_dir()
-    assert (target / "wiki" / "index.md").is_file()
-    assert (target / "wiki" / "log.md").is_file()
-    assert (target / "wiki" / "overview.md").is_file()
+    assert (target / "wiki").is_dir()
+    assert (target / "wiki" / "source").is_dir()
+    assert (target / "wiki" / "synthesis").is_dir()
+    assert (target / "index.md").is_file()
+    assert (target / "log.md").is_file()
+    assert (target / "overview.md").is_file()
 
 
 def test_init_includes_pdf_ingest_workflow(tmp_path):
@@ -63,12 +66,12 @@ def test_doctor_succeeds_for_fresh_workspace(tmp_path, capsys):
 def test_doctor_fails_when_required_file_missing(tmp_path, capsys):
     target = tmp_path / "my-wiki"
     assert run_cli("init", str(target)) == 0
-    (target / "wiki" / "index.md").unlink()
+    (target / "index.md").unlink()
 
     exit_code = run_cli("doctor", str(target))
 
     assert exit_code == 1
-    assert "missing: wiki/index.md" in capsys.readouterr().err
+    assert "missing: index.md" in capsys.readouterr().err
 
 
 def test_doctor_warns_when_pdfs_need_pdftotext(tmp_path, capsys, monkeypatch):
@@ -90,7 +93,7 @@ def test_doctor_warns_when_pdfs_need_pdftotext(tmp_path, capsys, monkeypatch):
 def test_log_prints_recent_entries(tmp_path, capsys):
     target = tmp_path / "my-wiki"
     assert run_cli("init", str(target)) == 0
-    (target / "wiki" / "log.md").write_text(
+    (target / "log.md").write_text(
         "\n".join(
             [
                 "# Wiki Log",
@@ -118,7 +121,7 @@ def test_log_prints_recent_entries(tmp_path, capsys):
 def test_index_prints_links_and_summaries(tmp_path, capsys):
     target = tmp_path / "my-wiki"
     assert run_cli("init", str(target)) == 0
-    (target / "wiki" / "index.md").write_text(
+    (target / "index.md").write_text(
         "\n".join(
             [
                 "# Wiki Index",

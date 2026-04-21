@@ -16,9 +16,11 @@ REQUIRED_PATHS = (
     "AGENTS.md",
     "raw",
     "wiki",
-    "wiki/index.md",
-    "wiki/log.md",
-    "wiki/overview.md",
+    "wiki/source",
+    "wiki/synthesis",
+    "index.md",
+    "log.md",
+    "overview.md",
 )
 LOG_HEADING_RE = re.compile(
     r"^## \[(?P<date>\d{4}-\d{2}-\d{2})\] (?P<kind>[^|]+) \| (?P<title>.+)$"
@@ -132,12 +134,12 @@ def main(argv: list[str] | None = None) -> int:
             print("workspace ok")
             return 0
         if args.command == "log":
-            entries = parse_log_entries(Path(args.path) / "wiki" / "log.md")
+            entries = parse_log_entries(Path(args.path) / "log.md")
             for entry in entries[-args.limit :]:
                 print(entry)
             return 0
         if args.command == "index":
-            entries = parse_index_entries(Path(args.path) / "wiki" / "index.md")
+            entries = parse_index_entries(Path(args.path) / "index.md")
             for entry in entries:
                 print(entry)
             return 0
