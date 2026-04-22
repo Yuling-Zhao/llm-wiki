@@ -15,12 +15,18 @@ DEFAULT_TEMPLATE = PACKAGED_TEMPLATE if PACKAGED_TEMPLATE.exists() else REPO_TEM
 REQUIRED_PATHS = (
     "AGENTS.md",
     "raw",
+    "raw/assets",
     "wiki",
+    "wiki/figures",
     "wiki/source",
     "wiki/synthesis",
     "index.md",
     "log.md",
     "overview.md",
+)
+DEPENDENCY_COMMANDS = (
+    ("pdftotext", "PDF text extraction"),
+    ("pdftoppm", "PDF page and figure-image extraction workflows"),
 )
 LOG_HEADING_RE = re.compile(
     r"^## \[(?P<date>\d{4}-\d{2}-\d{2})\] (?P<kind>[^|]+) \| (?P<title>.+)$"
@@ -76,6 +82,26 @@ def raw_contains_pdfs(path: Path) -> bool:
     )
 
 
+def missing_dependencies() -> list[tuple[str, str]]:
+    return [
+        (command, purpose)
+        for command, purpose in DEPENDENCY_COMMANDS
+        if shutil.which(command) is None
+    ]
+
+
+def print_dependency_warnings(missing: list[tuple[str, str]]) -> None:
+    if not missing:
+        return
+    for command, purpose in missing:
+        print(f"missing dependency: {command} ({purpose})", file=sys.stderr)
+    print(
+        "Install Poppler for PDF paper workflows "
+        "(macOS: brew install poppler; Debian/Ubuntu: apt install poppler-utils).",
+        file=sys.stderr,
+    )
+
+
 def parse_log_entries(log_path: Path) -> list[str]:
     entries: list[str] = []
     for line in log_path.read_text(encoding="utf-8").splitlines():
@@ -115,13 +141,21 @@ def main(argv: list[str] | None = None) -> int:
             init_workspace(Path(args.path))
             return 0
         if args.command == "doctor":
-            missing = missing_required_paths(Path(args.path))
+            workspace = Path(args.path)
+            dependency_warnings = missing_dependencies()
+            print_dependency_warnings(dependency_warnings)
+            if not workspace.exists():
+                print(f"workspace not initialized yet: {workspace}")
+                print(f"run: llm-wiki init {workspace}")
+                return 0
+
+            missing = missing_required_paths(workspace)
             if missing:
                 for relative in missing:
                     print(f"missing: {relative}", file=sys.stderr)
                 return 1
             if (
-                raw_contains_pdfs(Path(args.path))
+                raw_contains_pdfs(workspace)
                 and shutil.which("pdftotext") is None
             ):
                 print(

@@ -18,9 +18,29 @@ From a GitHub URL:
 pipx install "git+https://github.com/YOUR-USER/llm-wiki.git"
 ```
 
+## Check Dependencies
+
+Run `doctor` before creating a workspace. It checks whether optional paper-ingestion
+dependencies are available and tells you what to install.
+
+```bash
+llm-wiki doctor my-wiki
+```
+
+If Poppler tools are missing and you plan to ingest PDF papers, install them first:
+
+```bash
+# macOS
+brew install poppler
+
+# Debian/Ubuntu
+sudo apt install poppler-utils
+```
+
 ## Create a Workspace
 
 ```bash
+llm-wiki doctor my-wiki
 llm-wiki init my-wiki
 cd my-wiki
 ```
@@ -28,6 +48,8 @@ cd my-wiki
 The workspace contains:
 
 - `raw/` for immutable source files.
+- `raw/assets/` for extracted or downloaded figure images.
+- `wiki/figures/` for semantic figure pages.
 - `wiki/source/` for pages created directly from source ingestion.
 - `wiki/synthesis/` for synthesis pages refined through Q&A.
 - `index.md` for the content catalog.
@@ -35,7 +57,7 @@ The workspace contains:
 - `overview.md` for the current synthesis entry point.
 - `AGENTS.md` for LLM-agent operating instructions.
 
-## Check a Workspace
+## Check an Initialized Workspace
 
 ```bash
 llm-wiki doctor my-wiki
@@ -81,3 +103,28 @@ pdftotext -layout raw/paper.pdf /tmp/trim-pdf-text/paper.txt
 Then ask your LLM agent to ingest `/tmp/trim-pdf-text/paper.txt`, keeping
 `raw/paper.pdf` as the original source reference. `llm-wiki doctor` warns when
 PDFs are present in `raw/` and `pdftotext` is not available.
+
+## Figure-Aware Paper Ingestion
+
+Scientific figures are first-class evidence objects. When ingesting papers, the
+LLM agent should process the paper text, captions, and available figure images.
+Figure images can be stored under `raw/assets/<paper-slug>/`, but each figure
+also needs a semantic markdown page under `wiki/figures/`.
+
+Expected figure page paths:
+
+```text
+wiki/figures/<paper-slug>--fig-1.md
+wiki/figures/<paper-slug>--fig-2.md
+wiki/figures/<paper-slug>--fig-s1.md
+```
+
+Each source page in `wiki/source/` should include:
+
+- `## Figures`
+- `## Figure-level takeaways`
+
+The generated workspace `AGENTS.md` includes the full figure policy: panel maps,
+caption-grounded descriptions, observations, interpretation, supported claims,
+confidence wording, cross-linking rules, and failure handling for missing or
+low-quality figures.

@@ -26,6 +26,8 @@ llm_wiki = [
     "templates/default/log.md",
     "templates/default/overview.md",
     "templates/default/raw/.gitkeep",
+    "templates/default/raw/assets/.gitkeep",
+    "templates/default/wiki/figures/.gitkeep",
     "templates/default/wiki/source/.gitkeep",
     "templates/default/wiki/synthesis/.gitkeep",
 ]
