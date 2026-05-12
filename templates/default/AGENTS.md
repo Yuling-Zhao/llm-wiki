@@ -10,9 +10,9 @@ You maintain this workspace as a persistent, compounding markdown wiki.
 - `wiki/figures/` contains semantic figure pages. Figures are evidence objects, not attachments.
 - `wiki/source/` contains pages created directly from source ingestion.
 - `wiki/synthesis/` contains synthesis pages refined through Q&A with users.
-- `index.md` is the content catalog. Read it first when answering questions.
-- `log.md` is the append-only activity record.
-- `overview.md` is the entry point for the current synthesis.
+- `index.md` is the content catalog. Read it first when answering questions. Keep it graph-neutral: do not use markdown links or Obsidian `[[wikilinks]]` in this file.
+- `log.md` is the append-only activity record. Keep it graph-neutral: do not use markdown links or Obsidian `[[wikilinks]]` in this file.
+- `overview.md` is the entry point for the current synthesis. Keep it graph-neutral: do not use markdown links or Obsidian `[[wikilinks]]` in this file.
 
 ## Ingest Workflow
 
@@ -27,9 +27,9 @@ When the user asks you to ingest a source:
    - Ingest from the converted text and keep the original PDF as the source reference.
 3. Summarize the source's key claims, evidence, entities, and concepts.
 4. Create or update relevant pages in `wiki/source`.
-5. Add cross-links between related wiki pages.
-6. Update `index.md`.
-7. Append an entry to `log.md` using `## [YYYY-MM-DD] ingest | Source Title`.
+5. Add cross-links between related source and synthesis pages, but follow the graph-neutral rules below.
+6. Update `index.md` with plain text titles and code-formatted paths, not markdown links.
+7. Append an entry to `log.md` using `## [YYYY-MM-DD] ingest | Source Title`; use plain text page names, not links.
 
 ## Figure Ingestion Policy
 
@@ -59,8 +59,9 @@ For each ingested paper, create:
 - One source page in `wiki/source/`.
 - One figure page per main figure in `wiki/figures/`.
 - Optionally one figure page per supplementary figure in `wiki/figures/`.
-- Links from the source page to all figure pages.
-- Links from relevant concept/entity pages to figure pages when the figure contributes evidence.
+- Plain code-formatted resource paths from the source page to all figure pages.
+- Plain code-formatted resource paths from relevant concept/entity pages to figure pages when the figure contributes evidence.
+- Figure pages must not create Obsidian graph edges. Do not use markdown links or Obsidian `[[wikilinks]]` inside files under `wiki/figures/`.
 
 Use these paths:
 
@@ -84,8 +85,8 @@ For each figure:
 2. Inspect the image and panel structure if the image is available.
 3. Determine the experiment or data modality shown in each panel when possible.
 4. Write a figure page that separates direct visual content, caption-grounded description, scientific interpretation, and the claim the figure supports.
-5. Link the figure page to relevant concept, method, dataset, gene, protein, disease, or model pages.
-6. Update the source page with a `## Figures` section linking all figure pages.
+5. List relevant concept, method, dataset, gene, protein, disease, or model page names as plain text in the figure page. Do not link from figure pages.
+6. Update the source page with a `## Figures` section listing all figure pages as plain code-formatted paths.
 7. Update any affected synthesis pages if the figure materially changes the current understanding.
 
 Always prefer grounded interpretation. If a conclusion is only weakly supported by the caption or image, mark it as tentative.
@@ -96,7 +97,7 @@ Always prefer grounded interpretation. If a conclusion is only weakly supported 
 # Figure: <Paper Short Title> - Fig <N>
 
 ## Source
-- Paper: [[<paper source page>]]
+- Paper: <paper source page name as plain text>
 - Figure number: Fig <N>
 - Image path: `<path if available>`
 - Caption status: full / partial / missing
@@ -135,9 +136,9 @@ Distinguish clearly between:
 State the specific claim this figure supports in the paper.
 
 ## Key entities and concepts
-- [[Entity 1]]
-- [[Concept 1]]
-- [[Method 1]]
+- Entity 1
+- Concept 1
+- Method 1
 
 ## Data / method tags
 - `<omics>`
@@ -162,9 +163,9 @@ Each source page for a paper with figures must include:
 
 ```markdown
 ## Figures
-- [[<paper-slug>--fig-1]] - <one-line message>
-- [[<paper-slug>--fig-2]] - <one-line message>
-- [[<paper-slug>--fig-s1]] - <one-line message>
+- Figure resource: `wiki/figures/<paper-slug>--fig-1.md` - <one-line message>
+- Figure resource: `wiki/figures/<paper-slug>--fig-2.md` - <one-line message>
+- Figure resource: `wiki/figures/<paper-slug>--fig-s1.md` - <one-line message>
 
 ## Figure-level takeaways
 Summarize the most important evidence contributed by the figures across the paper.
@@ -195,7 +196,7 @@ Use confidence-matched language:
 - Never infer exact quantitative values unless explicitly shown.
 - Never treat the figure alone as stronger evidence than the caption plus paper context.
 - If the image is unavailable, still create a figure page from the caption, but clearly mark it as caption-only.
-- If a figure is central to the paper's thesis, link it from relevant synthesis pages.
+- If a figure is central to the paper's thesis, list its figure page path in relevant synthesis pages as a plain code-formatted resource path, not as a link.
 - If a figure contradicts an existing wiki claim, note that contradiction explicitly and update affected pages.
 
 ### Scientific Figure Types
@@ -212,7 +213,7 @@ For common paper figure types, extract structured meaning where possible:
 
 ### Cross-Linking, Logging, and Failure Modes
 
-When a figure provides reusable evidence, update or link concept pages, entity pages, method pages, comparison pages, and synthesis pages.
+When a figure provides reusable evidence, update relevant concept pages, entity pages, method pages, comparison pages, and synthesis pages. Figure-page references should be plain code-formatted paths, not graph links.
 
 For each ingested paper, append a parseable log entry that records figure work:
 
@@ -220,7 +221,7 @@ For each ingested paper, append a parseable log entry that records figure work:
 ## [YYYY-MM-DD] ingest | <Paper Title>
 - created source page
 - created figure pages: fig-1, fig-2, fig-3, fig-s1
-- updated concept pages: [[Concept A]], [[Concept B]]
+- updated concept pages: Concept A, Concept B
 - notes: fig-2 image quality poor; interpretation partly caption-only
 ```
 
@@ -249,7 +250,9 @@ When asked to lint the wiki, check for contradictions, stale claims, orphan page
 
 ## Conventions
 
-- Use markdown links for files and Obsidian-style `[[Page Name]]` links for wiki concepts.
+- Use Obsidian-style `[[Page Name]]` links for source and synthesis wiki concepts where graph edges are useful.
+- Do not use markdown links or Obsidian `[[wikilinks]]` in `index.md`, `log.md`, `overview.md`, or any file under `wiki/figures/`.
+- In graph-neutral files and figure references, use plain text names and code-formatted paths such as `wiki/source/page.md` or `wiki/figures/page--fig-1.md`.
 - Keep source references close to claims.
 - Do not silently delete useful prior synthesis. Mark superseded claims and explain why.
 - Keep `log.md` append-only.
